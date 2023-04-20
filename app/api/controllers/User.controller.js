@@ -7,24 +7,23 @@ const { to, ReE, ReS } = require('../services/util.service');
 
 
 const register = async function (req, res) {
-
-    const body = req.body
-    let [err, user] = await to(userModel.create(body));
-    user = JSON.parse(JSON.stringify(user))
-    delete user.password
-    if (err) return ReE(res, 'user not register')
-    return ReS(res, user)
+    try {
+        const body = req.body
+        let userData = await userModel.create(body);
+        let user = JSON.parse(JSON.stringify(userData))
+        delete user.password
+        res.send(user)
+    } catch (error) {
+        res.status(500).json({ error: error.message })
+    }
 }
 module.exports.register = register
 
-const authenticateUser = async function (req, res) {  // auth
+const signIn = async function (req, res) {  // auth
     const body = req.body
-
-    let [err, auth] = await to(userModel.findOne({ email: body.email, user_type: body.user_type }))
-
+    let [err, auth] = await to(userModel.findOne({ email: body.email }))
     if (err) return ReE(res, 'user not found')
     if (auth != null && bcrypt.compareSync(body.password, auth.password)) {
-
         const token = jwt.sign({ id: auth._id }, req.app.get('secretKey'), { expiresIn: '1h' });
         auth = JSON.parse(JSON.stringify(auth))
         delete auth.password
@@ -33,7 +32,7 @@ const authenticateUser = async function (req, res) {  // auth
         return ReE(res, 'invalid emailId/Password')
     }
 }
-module.exports.authenticateUser = authenticateUser
+module.exports.signIn = signIn
 
 const updateUser = async function (req, res) {
     const body0 = req.body

@@ -1,43 +1,39 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
-const saltRounds = 10;
+const mongoose = require('mongoose')
 
 //Define a schema
 const Schema = mongoose.Schema;
 
 const UserLeave = new Schema({
-    
-    userId: {
+	userId: {
 		type: Object,
-		trim: true,		
-	
-    },
-    reason: {
+		trim: true,
+		ref: 'User'
+	},
+	reason: {
 		type: String,
-		trim: true,		
-	
-    },
-    leave_name: {
+		trim: true,
+
+	},
+	leave_name: {
 		type: String,
-		trim: true,		
-	
+		trim: true,
 	},
 	leave_type: {
 		type: String,
 		trim: true,
-		},
-		user_type: {
-			type: Number,
-			trim: true,
-			},
+	},
+	user_type: {
+		type: Number,
+		trim: true,
+	},
 	isApproved: { // 1 pending, 2 approved , 3 reject by management   
 		type: Number,
-		default:1
-		},
-		
-			
-		
-},{timestamps: true});
+		default: 1
+	},
+
+
+
+}, { timestamps: true });
 
 
 
